@@ -1,31 +1,31 @@
-"""Print the one-line roast stored in entry.txt.
+"""Print the one-line roast for the make.fun bounty.
 
-The roast itself lives in entry.txt so the text judges see is exactly
-the text this program prints. Nothing else is printed.
+Reads the roast from entry.txt next to this file and prints it.
+If the file is missing or empty, a fallback roast is printed instead.
 """
 
 from pathlib import Path
 
 
-def load_roast() -> str:
-    """Return the roast line, stripped of surrounding whitespace.
+FALLBACK = (
+    "My phone dies at 4pm every day, yet somehow still has enough "
+    "battery left to ask me to rate the app that drained it."
+)
 
-    Falls back to a short note if the entry file is missing or blank,
-    so the program never prints nothing at all.
+
+def load_roast() -> str:
+    """Return the roast line from entry.txt, or the fallback.
+
+    The entry file holds exactly one line. Anything blank or unreadable
+    falls back to the built-in roast so the script always prints a line.
     """
     entry_path = Path(__file__).with_name("entry.txt")
     try:
-        roast = entry_path.read_text(encoding="utf-8").strip()
+        text = entry_path.read_text(encoding="utf-8").strip()
     except (FileNotFoundError, OSError):
-        roast = ""
-    if not roast:
-        roast = "(no roast written yet — see entry.txt)"
-    return roast
-
-
-def main() -> None:
-    print(load_roast())
+        return FALLBACK
+    return text if text else FALLBACK
 
 
 if __name__ == "__main__":
-    main()
+    print(load_roast())
